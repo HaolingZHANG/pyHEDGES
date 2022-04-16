@@ -127,3 +127,10 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+.idea/
+.idea/dictionaries/Horus.xml
+.idea/libraries/R_User_Library.xml
+.idea/misc.xml
+.idea/modules.xml
+.idea/pyHEDGES.iml
+.idea/vcs.xml
