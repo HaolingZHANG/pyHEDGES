@@ -20,7 +20,7 @@ def encode(binary_message, strand_index, pattern, mapping, bio_filter,
     :param mapping: mapping between 0/1/2/3 and A/C/G/T.
     :type mapping: list
     :param bio_filter: established local constraint set.
-    :type bio_filter: dsw.LocalBioFilter
+    :type bio_filter: LocalBioFilter
     :param salt_number: number of salt bits.
     :type salt_number: int
     :param previous_number: number of previous bits.
@@ -90,7 +90,7 @@ def decode(dna_string, strand_index, bit_length, pattern, mapping, bio_filter,
     :param mapping: mapping between 0/1/2/3 and A/C/G/T.
     :type mapping: list
     :param bio_filter: established local constraint set.
-    :type bio_filter: dsw.LocalBioFilter
+    :type bio_filter: LocalBioFilter
     :param salt_number: number of salt bits.
     :type salt_number: int
     :param previous_number: number of previous bits.
