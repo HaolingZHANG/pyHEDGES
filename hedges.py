@@ -1,6 +1,6 @@
 from datetime import datetime
 from itertools import product
-from numpy import array, longlong, max, where
+from numpy import array, longlong, min, max, where
 from warnings import filterwarnings
 
 filterwarnings("ignore", category=RuntimeWarning)
@@ -117,7 +117,8 @@ def decode(dna_string, strand_index, bit_length, pattern, mapping, bio_filter,
         The returned information includes three parts.
         The first element is a pair list containing the won candidates,
         the pair of which is a binary message and its corresponding DNA string.
-        The second element is the final size of heap
+        The second element is the final size of heap.
+        The third element is the reading process of DNA string (after search).
     """
     # s bits of salt (strand index).
     salt_value = strand_index % (2 ** salt_number)
@@ -177,21 +178,22 @@ def decode(dna_string, strand_index, bit_length, pattern, mapping, bio_filter,
 
             return follow_vertices, follow_scores, follow_indices, [len(v.message) for v in follow_vertices]
 
-    monitor, terminal_indices = Monitor(), None
+    monitor, terminal_indices, heap_size = Monitor(), None, 1
     heap = {"v": [HypothesisNode(0, [], "")], "s": [initial_score], "i": [0], "l": [0]}  # priority heap
 
-    # repair by A star search (score priority).
-    while True:
-        chuck_indices = where(array(heap["s"]) == min(heap["s"]))[0]
-        chuck_score = heap["s"][chuck_indices[0]]
+    while True:  # repair by A star search (score priority).
+        chuck_indices, chuck_score = where(array(heap["s"]) == min(heap["s"]))[0], min(heap["s"])
 
         for chuck_index in chuck_indices:
+            # noinspection PyTypeChecker
             heap["s"][chuck_index] = len(dna_string) + 1  # set the chuck vertex to inaccessible.
+            heap_size -= 1
 
             if heap["i"][chuck_index] >= len(dna_string):
                 continue
 
             follow_info = heap["v"][chuck_index].next(heap["i"][chuck_index], chuck_score)
+            heap_size += len(follow_info[0])
 
             heap["v"], heap["l"] = heap["v"] + follow_info[0], heap["l"] + follow_info[3]
             heap["s"], heap["i"] = heap["s"] + follow_info[1], heap["i"] + follow_info[2]
@@ -208,7 +210,7 @@ def decode(dna_string, strand_index, bit_length, pattern, mapping, bio_filter,
                 for terminal_index in where(array(heap["l"]) == bit_length)[0]:
                     candidates.append((heap["v"][terminal_index].message, heap["v"][terminal_index].string))
 
-                return candidates, len(where(array(heap["s"]) < len(dna_string) + 1)[0]), current_process
+                return candidates, heap_size, current_process
 
 
 def hash_function(source_value):
