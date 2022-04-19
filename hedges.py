@@ -35,10 +35,6 @@ def encode(binary_message, strand_index, pattern, mapping, bio_filter,
         The parameter "mapping" is the order of A/C/G/T.
         For example, if "mapping" is [C, G, T, A], the mapping between digit and nucleotide is
         0-C, 1-G, 2-T, and 3-T.
-
-        This is an extended version that can accept any local biochemical constraints.
-        The treatment when the number of available nucleotides is 3 is not clearly described in Press' work.
-        Here, when it equals 3, we only take the first two available nucleotides.
     """
     dna_string, available_nucleotides, bit_location, pattern_flag = "", mapping, 0, 0
     salt_index = strand_index % (2 ** salt_number)  # s bits of salt (strand ID).
